@@ -8,7 +8,7 @@ int main()
 {
 	FileReader reader;
 	SingleSequenceFasta sequence = reader.ReadFile("Data/Human-BRCA2-cds.fasta");
-	string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	string alphabet = reader.ReadAlphabet("Data/DNA_alphabet.txt");
 	SuffixTreeEngine st = SuffixTreeEngine(sequence.s1, list<char>(alphabet.begin(), alphabet.end()));
 	st.BuildTree();
 	st.PrintTree();

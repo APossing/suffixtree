@@ -1,10 +1,10 @@
 #include "SuffixTreeNode.h"
 #include <iostream>
-
-SuffixTreeNode::SuffixTreeNode(char myChar, int childSize, int id, SuffixTreeNode* parent, int depth)
+int SuffixTreeNode::childSize;
+/*SuffixTreeNode::SuffixTreeNode(char myChar, int childSize, int id, SuffixTreeNode* parent, int depth)
 {
 	this->childSize = childSize;
-	this->children = new SuffixTreeNode*[1]();
+	this->children = nullptr;
 	this->id = id;
 	this->isEnd = false;
 	this->character = myChar;
@@ -13,7 +13,20 @@ SuffixTreeNode::SuffixTreeNode(char myChar, int childSize, int id, SuffixTreeNod
 	this->suffixLink = nullptr;
 	this->childCount = 0;
 	this->isSmall = true;
- }
+ }*/
+
+SuffixTreeNode::SuffixTreeNode(char myChar, int id, SuffixTreeNode* parent, int depth)
+{
+	this->children = nullptr;
+	this->id = id;
+	this->isEnd = false;
+	this->character = myChar;
+	this->Parent = parent;
+	this->Depth = depth;
+	this->suffixLink = nullptr;
+	this->childCount = 0;
+	this->isSmall = true;
+}
 
 SuffixTreeNode* SuffixTreeNode::GetChild(int index)
 {
@@ -43,20 +56,22 @@ SuffixTreeNode* SuffixTreeNode::AddChild(int index, char myChar, int id)
 			this->children = new SuffixTreeNode*[this->childSize]();
 			this->children[smallIndex] = temp;
 
-			this->children[index] = new SuffixTreeNode(myChar, this->childSize, id, this, Depth + 1);
+			this->children[index] = new SuffixTreeNode(myChar, id, this, Depth + 1);
 			isSmall = false;
+			this->childCount++;
 		}
 		else
 		{
 			this->smallIndex = index;
-			this->children[0] = new SuffixTreeNode(myChar, this->childSize, id, this, Depth + 1);
+			this->children = new SuffixTreeNode* { new SuffixTreeNode(myChar, id, this, Depth + 1) };
+			this->childCount++;
 		}
 
 	}
 	else
 	{
 		childCount++;
-		this->children[index] = new SuffixTreeNode(myChar, this->childSize, id, this, Depth + 1);
+		this->children[index] = new SuffixTreeNode(myChar, id, this, Depth + 1);
 		return this->children[index];
 	}
 

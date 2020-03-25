@@ -15,7 +15,8 @@ SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 		(*alphabetDict)[element] = i++;
 	}
 	this->input = std::move(input) + "$";
-	this->root = new SuffixTreeNode(' ', alphabetCharCount, -1, nullptr, 0);
+	this->root = new SuffixTreeNode(' ', -1, nullptr, 0);
+	SuffixTreeNode::childSize = alphabetCharCount;
 	this->root->isEnd = true;
 	this->curId = 1;
 	this->prevMadeInternalNode = nullptr;

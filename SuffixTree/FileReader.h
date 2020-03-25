@@ -91,5 +91,20 @@ public:
 		file.close();
 		return params;
 	}
+	static string ReadAlphabet(string fileName)
+	{
+		ifstream file = ifstream(fileName);
+		if (!file.is_open())
+			return "";
+		string line = "";
+		getline(file, line);
+		string str = "";
+		for (char element : line)
+		{
+			if (element != ' ')
+				str += element;
+		}
+		return str;
+	}
 };
 
