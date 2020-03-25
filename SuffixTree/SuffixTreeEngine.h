@@ -9,8 +9,9 @@ public:
 	SuffixTreeEngine(std::string input, std::list<char> alphabet);
 	void BuildTree();
 	void PrintTree();
-	void FindPath();
-	void NodeHops();
+	void FindPath(SuffixTreeNode* node);
+	SuffixTreeNode* NodeHops(SuffixTreeNode* node);
+	void DisplayNode(SuffixTreeNode* node);
 private:
 	std::unordered_map<char, int>* alphabetDict;
 	std::string input;
@@ -18,6 +19,8 @@ private:
 	void InserSubString(std::string substring);
 	SuffixTreeNode* root;
 	int AlphabetIndex(char c);
-	void PrintTree(SuffixTreeNode* curNode);
+	int PrintTree(SuffixTreeNode* curNode, int count);
+	int curId;
+	SuffixTreeNode* prevMadeInternalNode;
 };
 
