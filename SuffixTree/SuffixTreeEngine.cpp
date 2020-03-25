@@ -16,6 +16,7 @@ SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 	}
 	this->input = std::move(input) + "$";
 	this->root = new SuffixTreeNode(' ', alphabetCharCount, -1, nullptr, 0);
+	this->root->isEnd = true;
 	this->curId = 1;
 	this->prevMadeInternalNode = nullptr;
 }
@@ -30,8 +31,9 @@ void SuffixTreeEngine::BuildTree()
 
 void SuffixTreeEngine::PrintTree()
 {
-	int count = 0;
+	int count = 1;
 	SuffixTreeNode* tempNode;
+	std::cout << "$:1" << " ";
 	for (int i = 0; i < this->alphabetCharCount; i++)
 	{
 		tempNode = root->GetChild(i);
@@ -55,18 +57,16 @@ void SuffixTreeEngine::InserSubString(std::string substring)
 {
 	SuffixTreeNode* curNode = root;
 	if (prevMadeInternalNode != nullptr)
-		curNode = prevMadeInternalNode;
-	
+		curNode = prevMadeInternalNode->Parent;
 	while (curNode != root)
 	{
-		if (curNode->suffixLink != nullptr);
+		if (curNode->suffixLink != nullptr)
 		{
 			curNode = NodeHops(curNode);
 			break;
 		}
-	}
-	while (curNode->Depth >= substring.size())
 		curNode = curNode->Parent;
+	}
 	
 	SuffixTreeNode* tempNode;
 
@@ -74,7 +74,7 @@ void SuffixTreeEngine::InserSubString(std::string substring)
 
 	
 	bool insertComplete = false;
-	while (curNode->Depth < (int)substring.size() && !insertComplete)
+	while (curNode->Depth <= (int)substring.size() && !insertComplete)
 	{
 		char curChar = substring[curNode->Depth];
 		tempNode = curNode->GetChild(AlphabetIndex(curChar));

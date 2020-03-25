@@ -18,5 +18,7 @@ private:
 	SuffixTreeNode** children;
 	int childSize;
 	int id;
+	bool isSmall;
+	char smallIndex;
 };
 

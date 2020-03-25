@@ -7,8 +7,8 @@
 int main()
 {
 	FileReader reader;
-	SingleSequenceFasta sequence = reader.ReadFile("Data/s1.fas");
-	string alphabet = "ACGT";
+	SingleSequenceFasta sequence = reader.ReadFile("Data/Human-BRCA2-cds.fasta");
+	string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	SuffixTreeEngine st = SuffixTreeEngine(sequence.s1, list<char>(alphabet.begin(), alphabet.end()));
 	st.BuildTree();
 	st.PrintTree();
