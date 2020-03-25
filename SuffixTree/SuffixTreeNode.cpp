@@ -26,9 +26,10 @@ SuffixTreeNode::SuffixTreeNode(char myChar, int id, SuffixTreeNode* parent, int 
 	this->suffixLink = nullptr;
 	this->childCount = 0;
 	this->isSmall = true;
+	this->smallIndex = -1;
 }
 
-SuffixTreeNode* SuffixTreeNode::GetChild(int index)
+SuffixTreeNode* SuffixTreeNode::GetChild(int index) const
 {
 	//should add some error checking, but I want it to crash rn.
 
@@ -59,12 +60,14 @@ SuffixTreeNode* SuffixTreeNode::AddChild(int index, char myChar, int id)
 			this->children[index] = new SuffixTreeNode(myChar, id, this, Depth + 1);
 			isSmall = false;
 			this->childCount++;
+			return this->children[index];
 		}
 		else
 		{
 			this->smallIndex = index;
 			this->children = new SuffixTreeNode* { new SuffixTreeNode(myChar, id, this, Depth + 1) };
 			this->childCount++;
+			return this->children[0];
 		}
 
 	}
@@ -77,12 +80,12 @@ SuffixTreeNode* SuffixTreeNode::AddChild(int index, char myChar, int id)
 
 }
 
-bool SuffixTreeNode::IsLeaf()
+bool SuffixTreeNode::IsLeaf() const
 {
 	return this->childCount == 1 && !this->isEnd || this->childCount == 0 && this->isEnd;
 }
 
-void SuffixTreeNode::Display()
+void SuffixTreeNode::Display() const
 {
 	std::cout << character << std::endl;
 }

@@ -8,9 +8,9 @@ class SuffixTreeEngine
 public:
 	SuffixTreeEngine(std::string input, std::list<char> alphabet);
 	void BuildTree();
-	void PrintTree();
+	void PrintTree() const;
 	void FindPath(SuffixTreeNode* node);
-	SuffixTreeNode* NodeHops(SuffixTreeNode* node);
+	static SuffixTreeNode* NodeHops(SuffixTreeNode* node);
 	void DisplayNode(SuffixTreeNode* node);
 private:
 	std::unordered_map<char, int>* alphabetDict;
@@ -18,8 +18,8 @@ private:
 	int alphabetCharCount;
 	void InserSubString(std::string substring);
 	SuffixTreeNode* root;
-	int AlphabetIndex(char c);
-	int PrintTree(SuffixTreeNode* curNode, int count);
+	int AlphabetIndex(char c) const;
+	int PrintTree(SuffixTreeNode* curNode, int count) const;
 	int curId;
 	SuffixTreeNode* prevMadeInternalNode;
 };

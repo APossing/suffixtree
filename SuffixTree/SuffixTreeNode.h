@@ -4,10 +4,10 @@ class SuffixTreeNode
 public:
 	SuffixTreeNode(char myChar, int id, SuffixTreeNode* parent, int depth);
 	//SuffixTreeNode(char myChar, int childSize, int id, SuffixTreeNode* parent, int depth);
-	SuffixTreeNode* GetChild(int index);
+	SuffixTreeNode* GetChild(int index) const;
 	SuffixTreeNode* AddChild(int index, char myChar, int id);
-	bool IsLeaf();
-	void Display();
+	bool IsLeaf() const;
+	void Display() const;
 	int getId();
 	bool isEnd;
 	char character;
@@ -20,8 +20,9 @@ private:
 	SuffixTreeNode** children;
 	int id;
 	bool isSmall;
-	char smallIndex;
+	char smallIndex{};
 };
+
 
 
 

@@ -6,7 +6,7 @@
 
 SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 {
-	alphabetCharCount = alphabet.size() + 1;
+	alphabetCharCount = static_cast<int>(alphabet.size()) + 1;
 	alphabetDict = new std::unordered_map<char, int>(alphabetCharCount);
 	int i = 1;
 	alphabet.sort();
@@ -30,7 +30,7 @@ void SuffixTreeEngine::BuildTree()
 	}
 }
 
-void SuffixTreeEngine::PrintTree()
+void SuffixTreeEngine::PrintTree() const
 {
 	int count = 1;
 	SuffixTreeNode* tempNode;
@@ -105,7 +105,7 @@ void SuffixTreeEngine::InserSubString(std::string substring)
 				}
 				
 				//lets handle dat fresh insert...
-				while (curNode->Depth < substring.size() - 1)
+				while (curNode->Depth < static_cast<int>(substring.size()) - 1)
 				{
 					curNode->AddChild(AlphabetIndex(substring[curNode->Depth]), substring[curNode->Depth], curId++); //depth may be off by one
 					curNode = curNode->GetChild(AlphabetIndex(substring[curNode->Depth]));
@@ -121,12 +121,12 @@ void SuffixTreeEngine::InserSubString(std::string substring)
 	}
 }
 
-int SuffixTreeEngine::AlphabetIndex(char c)
+int SuffixTreeEngine::AlphabetIndex(char c) const
 {
 	return (*alphabetDict)[c];
 }
 
-int SuffixTreeEngine::PrintTree(SuffixTreeNode* curNode, int count)
+int SuffixTreeEngine::PrintTree(SuffixTreeNode* curNode, int count) const
 {
 	if (count == 10)
 	{
