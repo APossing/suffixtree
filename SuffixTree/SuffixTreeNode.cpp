@@ -11,6 +11,7 @@ SuffixTreeNode::SuffixTreeNode(char myChar, int childSize, int id, SuffixTreeNod
 	this->Parent = parent;
 	this->Depth = depth;
 	this->suffixLink = nullptr;
+	this->childCount = 0;
 }
 
 SuffixTreeNode* SuffixTreeNode::GetChild(int index)
@@ -21,13 +22,14 @@ SuffixTreeNode* SuffixTreeNode::GetChild(int index)
 
 SuffixTreeNode* SuffixTreeNode::AddChild(int index, char myChar, int id)
 {
+	childCount++;
 	this->children[index] = new SuffixTreeNode(myChar, this->childSize, id ,this, Depth+1);
 	return this->children[index];
 }
 
 bool SuffixTreeNode::IsLeaf()
 {
-	return this->childSize > 1 || this->childSize == 1 && this->isEnd;
+	return this->childCount == 1 || this->childCount == 0 && this->isEnd;
 }
 
 void SuffixTreeNode::Display()

@@ -3,7 +3,6 @@ class SuffixTreeNode
 {
 public:
 	SuffixTreeNode(char myChar, int childSize, int id, SuffixTreeNode* parent, int depth);
-	//SuffixTreeNode(int childSize, char child, int id);
 	SuffixTreeNode* GetChild(int index);
 	SuffixTreeNode* AddChild(int index, char myChar, int id);
 	bool IsLeaf();
@@ -14,6 +13,7 @@ public:
 	SuffixTreeNode* Parent;
 	int Depth;
 	SuffixTreeNode* suffixLink;
+	int childCount;
 private:
 	SuffixTreeNode** children;
 	int childSize;

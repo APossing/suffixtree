@@ -37,7 +37,6 @@ void SuffixTreeEngine::PrintTree()
 		tempNode = root->GetChild(i);
 		if (tempNode != nullptr)
 		{
-			//tempNode->Display();
 			count = PrintTree(tempNode, count);
 		}
 	}
@@ -66,7 +65,8 @@ void SuffixTreeEngine::InserSubString(std::string substring)
 			break;
 		}
 	}
-
+	while (curNode->Depth >= substring.size())
+		curNode = curNode->Parent;
 	
 	SuffixTreeNode* tempNode;
 
@@ -83,6 +83,14 @@ void SuffixTreeEngine::InserSubString(std::string substring)
 			if (curChar == '$')
 			{
 				//end of dat string;
+				if (curNode->IsLeaf() && curNode != root)
+				{
+					if (prevMadeInternalNode != nullptr)
+						prevMadeInternalNode->suffixLink = curNode;
+
+					prevMadeInternalNode = curNode;
+				}
+				
 				curNode->isEnd = true;
 			}
 			else
