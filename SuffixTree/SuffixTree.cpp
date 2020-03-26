@@ -4,13 +4,19 @@
 #include <iostream>
 #include "FileReader.h"
 #include "SuffixTreeEngine.h"
-int main()
+int main(int argc, char* argv[])
 {
-	FileReader reader;
-	SingleSequenceFasta sequence = reader.ReadFile("Data/Slyco.fas");
-	string alphabet = reader.ReadAlphabet("Data/DNA_alphabet.txt");
+	if (argc < 3)
+	{
+		cout << "Please add parameters... <input file containing s1> <input file containing alphabet" << endl;
+		return 0;
+	}
+	
+	SingleSequenceFasta sequence = FileReader::ReadFile(argv[1]);
+	string alphabet = FileReader::ReadAlphabet(argv[2]);
 	SuffixTreeEngine st = SuffixTreeEngine(sequence.s1, list<char>(alphabet.begin(), alphabet.end()));
 	st.BuildTree();
+	st.DisplayBWT();
 	st.PrintTree();
 	return 1;
 }

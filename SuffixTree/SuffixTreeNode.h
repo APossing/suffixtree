@@ -16,11 +16,13 @@ public:
 	SuffixTreeNode* suffixLink;
 	int childCount;
 	static int childSize;
+	int leafId;
 private:
 	SuffixTreeNode** children;
 	int id;
 	bool isSmall;
 	char smallIndex{};
+	
 };
 
 

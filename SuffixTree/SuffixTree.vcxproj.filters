@@ -38,6 +38,9 @@
     <ClInclude Include="SuffixTreeNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ProgramSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\chr12.fas">

@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileReader.h" />
+    <ClInclude Include="ProgramSettings.h" />
     <ClInclude Include="SuffixTreeEngine.h" />
     <ClInclude Include="SuffixTreeNode.h" />
   </ItemGroup>

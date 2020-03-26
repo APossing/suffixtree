@@ -27,6 +27,7 @@ SuffixTreeNode::SuffixTreeNode(char myChar, int id, SuffixTreeNode* parent, int 
 	this->childCount = 0;
 	this->isSmall = true;
 	this->smallIndex = -1;
+	this->leafId = -1;
 }
 
 SuffixTreeNode* SuffixTreeNode::GetChild(int index) const

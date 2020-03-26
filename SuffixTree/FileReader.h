@@ -71,26 +71,6 @@ public:
 		file.close();
 		return info;
 	}
-	static Parameters ReadParameters(string fileName)
-	{
-		Parameters params = Parameters();
-		ifstream file = ifstream(fileName);
-		string line = "";
-		file >> line;
-		file >> params.match;
-
-		file >> line;
-		file >> params.mismatch;
-
-		file >> line;
-		file >> params.h;
-
-		file >> line;
-		file >> params.g;
-
-		file.close();
-		return params;
-	}
 	static string ReadAlphabet(string fileName)
 	{
 		ifstream file = ifstream(fileName);

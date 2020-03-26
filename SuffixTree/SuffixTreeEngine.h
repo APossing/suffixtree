@@ -13,6 +13,7 @@ public:
 	static SuffixTreeNode* JumpLinks(SuffixTreeNode* node);
 	SuffixTreeNode* NodeHops(SuffixTreeNode* node, std::string beta);
 	void DisplayNode(SuffixTreeNode* node);
+	void DisplayBWT();
 private:
 	std::unordered_map<char, int>* alphabetDict;
 	std::string input;
@@ -22,5 +23,8 @@ private:
 	int PrintTree(SuffixTreeNode* curNode, int count) const;
 	int curId;
 	SuffixTreeNode* prevMadeInternalNode;
+	SuffixTreeNode* u;
+	void InsertEndOfSuffix(SuffixTreeNode* node, int startIndex);
+	void DisplayBWT(SuffixTreeNode* node);
 };
 
