@@ -1,5 +1,5 @@
 #include "SuffixTreeEngine.h"
-
+#include <ctime>
 #include <utility>
 #include <ostream>
 #include <iostream>
@@ -24,9 +24,78 @@ SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 
 void SuffixTreeEngine::BuildTree()
 {
-	for (int i = 0; i < this->input.size(); i++)
+	clock_t begin = clock();
+	for (int i = 0; i < static_cast<int>(this->input.size()); i++)
 	{
-		InserSubString(this->input.substr(i, input.size() - i));
+		if (i % 100 == 0)
+			std::cout << i << ":" << (clock() - begin) / static_cast<double>(CLOCKS_PER_SEC) << std::endl;
+
+		SuffixTreeNode* curNode = root;
+		if (prevMadeInternalNode != nullptr)
+			curNode = prevMadeInternalNode->Parent;
+		std::string beta = "";
+		while (curNode != root)
+		{
+			if (curNode->suffixLink != nullptr)
+			{
+				curNode = NodeHops(curNode, beta);
+				prevMadeInternalNode->suffixLink = curNode;
+				prevMadeInternalNode = curNode;
+				i = i + beta.size();
+				break;
+			}
+			beta += curNode->character;
+			curNode = curNode->Parent;
+		}
+		
+		curNode = FindPath(curNode, i);
+		
+		char curChar = this->input[curNode->Depth+i];
+		
+		if (curChar == '$')
+		{
+			//end of dat string;
+			if (curNode->IsLeaf() && curNode != root)
+			{
+				if (prevMadeInternalNode != nullptr)
+				{
+					if (prevMadeInternalNode->Depth != curNode->Depth + 1)
+						prevMadeInternalNode->suffixLink = root;
+					else
+						prevMadeInternalNode->suffixLink = curNode;
+
+				}
+
+				prevMadeInternalNode = curNode;
+			}
+
+			curNode->isEnd = true;
+		}
+		else
+		{
+			if (curNode->IsLeaf() && curNode != root)
+			{
+				if (prevMadeInternalNode != nullptr)
+				{
+					if (prevMadeInternalNode->Depth != curNode->Depth + 1)
+						prevMadeInternalNode->suffixLink = root;
+					else
+						prevMadeInternalNode->suffixLink = curNode;
+
+				}
+
+				prevMadeInternalNode = curNode;
+			}
+
+			//lets handle dat fresh insert...
+			while (curNode->Depth < static_cast<int>(input.size()-i) - 1)
+			{
+				curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), this->input[curNode->Depth + i], curId++);
+				curNode = curNode->GetChild(AlphabetIndex(this->input[curNode->Depth + i]));
+			}
+
+			curNode->isEnd = true;
+		}
 	}
 }
 
@@ -45,7 +114,29 @@ void SuffixTreeEngine::PrintTree() const
 	}
 }
 
-SuffixTreeNode* SuffixTreeEngine::NodeHops(SuffixTreeNode* node)
+SuffixTreeNode* SuffixTreeEngine::FindPath(SuffixTreeNode* curNode, int startIndex)
+{
+	std::string substring = this->input.substr(startIndex, input.size() - startIndex);
+	SuffixTreeNode* tempNode;
+
+	while (curNode->Depth <= (int)substring.size())
+	{
+		char curChar = substring[curNode->Depth];
+		tempNode = curNode->GetChild(AlphabetIndex(curChar));
+		if (tempNode == nullptr)
+		{
+			return curNode;
+		}
+		else
+		{
+			curNode = tempNode;
+		}
+	}
+	//This should NEVER happen.
+	return nullptr;
+}
+
+SuffixTreeNode* SuffixTreeEngine::JumpLinks(SuffixTreeNode* node)
 {
 	while (node->suffixLink != nullptr)
 	{
@@ -54,71 +145,13 @@ SuffixTreeNode* SuffixTreeEngine::NodeHops(SuffixTreeNode* node)
 	return node;
 }
 
-void SuffixTreeEngine::InserSubString(std::string substring)
+SuffixTreeNode* SuffixTreeEngine::NodeHops(SuffixTreeNode* node, std::string beta)
 {
-	SuffixTreeNode* curNode = root;
-	if (prevMadeInternalNode != nullptr)
-		curNode = prevMadeInternalNode->Parent;
-	while (curNode != root)
+	for (int i = 1; i <= (int)beta.length(); i++)
 	{
-		if (curNode->suffixLink != nullptr)
-		{
-			curNode = NodeHops(curNode);
-			break;
-		}
-		curNode = curNode->Parent;
+		node = node->GetChild((*alphabetDict)[beta[beta.size() - i]]);
 	}
-	
-	SuffixTreeNode* tempNode;
-
-
-
-	
-	bool insertComplete = false;
-	while (curNode->Depth <= (int)substring.size() && !insertComplete)
-	{
-		char curChar = substring[curNode->Depth];
-		tempNode = curNode->GetChild(AlphabetIndex(curChar));
-		if (tempNode == nullptr)
-		{
-			if (curChar == '$')
-			{
-				//end of dat string;
-				if (curNode->IsLeaf() && curNode != root)
-				{
-					if (prevMadeInternalNode != nullptr)
-						prevMadeInternalNode->suffixLink = curNode;
-
-					prevMadeInternalNode = curNode;
-				}
-				
-				curNode->isEnd = true;
-			}
-			else
-			{
-				if (curNode->IsLeaf() && curNode != root)
-				{
-					if (prevMadeInternalNode != nullptr)
-						prevMadeInternalNode->suffixLink = curNode;
-					
-					prevMadeInternalNode = curNode;
-				}
-				
-				//lets handle dat fresh insert...
-				while (curNode->Depth < static_cast<int>(substring.size()) - 1)
-				{
-					curNode->AddChild(AlphabetIndex(substring[curNode->Depth]), substring[curNode->Depth], curId++); //depth may be off by one
-					curNode = curNode->GetChild(AlphabetIndex(substring[curNode->Depth]));
-				}
-				curNode->isEnd = true;
-			}
-			insertComplete = true;
-		}
-		else
-		{
-			curNode = tempNode;
-		}
-	}
+	return node;
 }
 
 int SuffixTreeEngine::AlphabetIndex(char c) const
