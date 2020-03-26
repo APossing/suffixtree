@@ -14,8 +14,8 @@ SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 	{
 		(*alphabetDict)[element] = i++;
 	}
-	this->input = std::move(input) + "$";
-	this->root = new SuffixTreeNode(' ', -1, nullptr, 0);
+	this->input = std::move(input);
+	this->root = new SuffixTreeNode("", -1, nullptr, 0);
 	this->root->suffixLink = root;
 	this->u = root;
 	SuffixTreeNode::childSize = alphabetCharCount;
@@ -38,16 +38,17 @@ void SuffixTreeEngine::BuildTree()
 		{
 			clock_t begin1 = clock();
 			//case 2
-			std::string beta = "";
+			std::string beta = curNode->edgeString.substr(0, curNode->edgeString.length() - 1);
+			curNode = curNode->Parent;
 			while (curNode->suffixLink == nullptr)
 			{
-				beta += curNode->character;
+				beta += curNode->edgeString;
 				curNode = curNode->Parent;
 			}
 			//case 2b
-			if (curNode == root)
+			if (curNode == root && beta.length() > 0)
 			{
-				beta.pop_back();
+				beta.erase(0,1);
 			}
 			curNode = curNode->suffixLink;
 			curNode = NodeHops(curNode, beta);
@@ -89,15 +90,63 @@ void SuffixTreeEngine::PrintTree() const
 	}
 }
 
+int SuffixTreeEngine::PrintTree(SuffixTreeNode* curNode, int count) const
+{
+	if (count == 10)
+	{
+		count = 0;
+		std::cout << std::endl;
+	}
+	count++;
+	std::cout << curNode->edgeString << ":" << curNode->Depth << " ";
+
+	if (count == 10)
+	{
+		count = 0;
+		std::cout << std::endl;
+	}
+
+	if (curNode->isEnd)
+	{
+		std::cout << "$" << ":" << curNode->Depth + 1 << " ";
+		count++;
+	}
+
+	for (int i = 0; i < this->alphabetCharCount; i++)
+	{
+		if (count == 10)
+		{
+			count = 0;
+			std::cout << std::endl;
+		}
+
+		SuffixTreeNode* tempNode = curNode->GetChild(i);
+		if (tempNode != nullptr)
+			count = PrintTree(tempNode, count++);
+	}
+	return count;
+}
+
+
 SuffixTreeNode* SuffixTreeEngine::FindPath(SuffixTreeNode* curNode, int startIndex)
 {
 	std::string substring = this->input.substr(startIndex, input.size() - startIndex);
 	SuffixTreeNode* tempNode;
 
-	while (curNode->Depth <= (int)substring.size())
+	for (int i = 0; i < (int)substring.length();)
 	{
-		char curChar = substring[curNode->Depth];
-		tempNode = curNode->GetChild(AlphabetIndex(curChar));
+		int amount = curNode->edgeString.length();
+		int j = 0;
+		for (j = 0; j < amount; j++)
+		{
+			if (curNode->edgeString[j] != substring[i+j])
+			{
+				curNode->breakApart(j, (*alphabetDict)[substring[i + j-1]]);
+				return curNode;
+			}
+		}
+		i += j;
+		tempNode = curNode->GetChild(AlphabetIndex(substring[i]));
 		if (tempNode == nullptr)
 		{
 			return curNode;
@@ -113,9 +162,26 @@ SuffixTreeNode* SuffixTreeEngine::FindPath(SuffixTreeNode* curNode, int startInd
 
 SuffixTreeNode* SuffixTreeEngine::NodeHops(SuffixTreeNode* node, std::string beta)
 {
-	for (int i = 1; i <= (int)beta.length(); i++)
+	for (int i = 0; i <= (int)beta.length();)
 	{
-		node = node->GetChild((*alphabetDict)[beta[beta.size() - i]]);
+		int amount = node->edgeString.length();
+		if (i+amount > (int)beta.length())
+		{
+			int breakpoint = (int)beta.length() - i;
+			node->breakApart(breakpoint, (*alphabetDict)[node->edgeString[breakpoint]]);
+			break;
+		}
+		if (i+amount == (int)beta.length())
+		{
+			return node;
+		}
+		else
+		{
+			i += amount;
+			char endingChar = beta[i];
+			node = node->GetChild((*alphabetDict)[endingChar]);
+		}
+		
 	}
 	return node;
 }
@@ -151,55 +217,17 @@ int SuffixTreeEngine::AlphabetIndex(char c) const
 	return (*alphabetDict)[c];
 }
 
-int SuffixTreeEngine::PrintTree(SuffixTreeNode* curNode, int count) const
-{
-	if (count == 10)
-	{
-		count = 0;
-		std::cout << std::endl;
-	}
-	count++;
-	std::cout << curNode->character << ":" << curNode->Depth << " ";
-
-	if (count == 10)
-	{
-		count = 0;
-		std::cout << std::endl;
-	}
-
-	if (curNode->isEnd)
-	{
-		std::cout << "$" << ":" << curNode->Depth + 1 << " ";
-		count++;
-	}
-
-	for (int i = 0; i < this->alphabetCharCount; i++)
-	{
-		if (count == 10)
-		{
-			count = 0;
-			std::cout << std::endl;
-		}
-
-		SuffixTreeNode* tempNode = curNode->GetChild(i);
-		if (tempNode != nullptr)
-			count = PrintTree(tempNode, count++);
-	}
-	return count;
-}
-
 void SuffixTreeEngine::InsertEndOfSuffix(SuffixTreeNode* curNode, int i)
 {
 	u = curNode;
-	char curChar = this->input[curNode->Depth + i];
-	if (curChar != '$')
+	std::string restOfString = this->input.substr(curNode->Depth + i);
+	if (restOfString != "")
 	{
 		clock_t begin5 = clock();
 		//lets handle dat fresh insert...
-		while (curNode->Depth < static_cast<int>(input.size() - i) - 1)
-		{
-			curNode = curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), this->input[curNode->Depth + i], curId++);
-		}
+		//curNode = curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), this->input[curNode->Depth + i], curId++);
+		curNode = curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), restOfString.substr(0,restOfString.size()-1), curId);
+		curId += restOfString.size();
 		std::cout << i << "while loop took: " << (clock() - begin5) / static_cast<double>(CLOCKS_PER_SEC) << std::endl;
 	}
 
