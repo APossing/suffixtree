@@ -17,6 +17,7 @@ SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 	this->input = std::move(input);
 	this->root = new SuffixTreeNode("", -1, nullptr, 0);
 	this->root->suffixLink = root;
+	this->root->leafId = this->input.length();
 	this->u = root;
 	SuffixTreeNode::childSize = alphabetCharCount;
 	this->root->isEnd = true;
@@ -27,7 +28,7 @@ SuffixTreeEngine::SuffixTreeEngine(std::string input, std::list<char> alphabet)
 void SuffixTreeEngine::BuildTree()
 {
 	clock_t begin = clock();
-	for (int i = 0; i < static_cast<int>(this->input.size()); i++)
+	for (int i = 0; i < static_cast<int>(this->input.length()); i++)
 	{
 		if (i % 100 == 0)
 			std::cout << i << ":" << (clock() - begin) / static_cast<double>(CLOCKS_PER_SEC) << std::endl;
@@ -195,13 +196,13 @@ void SuffixTreeEngine::DisplayBWT()
 
 void SuffixTreeEngine::DisplayBWT(SuffixTreeNode* curNode)
 {
-
 	if (curNode->isEnd)
 	{
 		int value = curNode->leafId -1;
 		if (value < 0)
-			value = this->input.size() - 1;
-		std::cout << this->input[value] << std::endl;
+			std::cout << "$" << std::endl;
+		else
+			std::cout << this->input[value] << std::endl;
 	}
 
 	for (int i = 0; i < this->alphabetCharCount; i++)
@@ -220,13 +221,12 @@ int SuffixTreeEngine::AlphabetIndex(char c) const
 void SuffixTreeEngine::InsertEndOfSuffix(SuffixTreeNode* curNode, int i)
 {
 	u = curNode;
-	std::string restOfString = this->input.substr(curNode->Depth + i);
-	if (restOfString != "")
+	std::string restOfString = this->input.substr(i + curNode->Depth);
+	
+	if (restOfString != "" && restOfString.length() > curNode->edgeString.length())
 	{
 		clock_t begin5 = clock();
-		//lets handle dat fresh insert...
-		//curNode = curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), this->input[curNode->Depth + i], curId++);
-		curNode = curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), restOfString.substr(0,restOfString.size()-1), curId);
+		curNode = curNode->AddChild(AlphabetIndex(this->input[curNode->Depth + i]), restOfString.substr(0,restOfString.size()), curId);
 		curId += restOfString.size();
 		std::cout << i << "while loop took: " << (clock() - begin5) / static_cast<double>(CLOCKS_PER_SEC) << std::endl;
 	}

@@ -25,7 +25,7 @@ SuffixTreeNode::SuffixTreeNode(std::string myEdge, int id, SuffixTreeNode* paren
 	this->Parent = parent;
 	this->Depth = depth;
 	this->suffixLink = nullptr;
-	this->childCount = 0;
+	this->childCount = childrenCount;
 	this->isSmall = childrenCount <=1;
 	this->smallIndex = -1;
 	this->leafId = -1;
