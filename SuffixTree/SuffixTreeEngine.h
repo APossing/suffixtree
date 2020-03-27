@@ -26,5 +26,6 @@ private:
 	SuffixTreeNode* u;
 	void InsertEndOfSuffix(SuffixTreeNode* node, int startIndex);
 	void DisplayBWT(SuffixTreeNode* node);
+	int nodeJumpValue;
 };
 
